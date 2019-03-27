@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MultiSicesVideoPlayer from './MultiSlicesVideoPlayer';
+import GraphDemo from './GraphDemo';
+
 
 
 const slices = [
@@ -17,7 +19,8 @@ document.body.appendChild(root);
 
 
 ReactDOM.render(
-  <MultiSicesVideoPlayer slices={slices}/>,
+  // <MultiSicesVideoPlayer slices={slices}/>,
+  <GraphDemo/>,
   root
 )
 
