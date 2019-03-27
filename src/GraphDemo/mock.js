@@ -17,8 +17,8 @@ function createEdge() {
   const index1 = Math.floor(Math.random() * arr.length);
   const index2 = Math.floor(Math.random() * arr.length);
 
-  const source = String(arr[index1]);
-  const target = String(arr[index2]);
+  const source = String(arr[0]);
+  const target = String(arr[1]);
   return {
     source,
     target
@@ -31,14 +31,14 @@ export default {
   nodes: [
     createNode(),
     createNode(),
-    createNode(),
-    createNode(),
+    // createNode(),
+    // createNode(),
   ],
   edges: [
     createEdge(),
-    createEdge(),
-    createEdge(),
-    createEdge(),
+    // createEdge(),
+    // createEdge(),
+    // createEdge(),
   ]
 
 }

@@ -1,10 +1,82 @@
-import G6 from '@antv/g6';
+import G6, { Util } from '@antv/g6';
 import * as d3 from 'd3';
 
 const WIDTH = 800;
 const HEIGHT = 600;
 const BLOCK_WIDTH = 100;
 const BLOCK_HEGHT = 30;
+
+
+const MIN_TRIANGEL = 3;
+const MIN_ARROW_SIZE = 3;
+
+G6.registerEdge('customEdge', {
+
+  // 设置状态
+  setState(name, value, item) {
+    const group = item.getContainer();
+    const items = group.get('children');
+    if (!Array.isArray(items)) {
+      return;
+    }
+    items.forEach(shape => {
+      if(name === 'hidden') {
+        if(value) {
+          shape.attr('opacity', 0.1);
+        } else {
+          shape.attr('opacity', 1);
+        }
+      }
+      if (name === 'selected') {
+        if(value) {
+          // shape.attr('lineWidth', 2);
+          shape.attr('stroke', '#0000ff');
+          shape.attr('fillOpacity', 0.8);
+          
+        } else {
+          // shape.attr('lineWidth', 2);
+        }
+      }
+    })    
+  },
+  
+  draw(cfg, group) {
+    const { startPoint, endPoint } = cfg;
+    
+    let hgap = endPoint.x - startPoint.x;
+    let vgap = endPoint.y - startPoint.y;
+    const path = [
+      ['M', startPoint.x, startPoint.y], 
+      [
+        'C',
+        startPoint.x + hgap/ 4,  startPoint.y + vgap /2,
+        startPoint.x + hgap * 3 / 4, startPoint.y + vgap/2,
+        endPoint.x - 3, endPoint.y - 3
+      ]
+    ];
+
+    group.addShape('path', {
+      attrs: {
+        path,
+        stroke: '#e2e2e2',
+        lineWidth: 1
+      }
+    });
+    
+    return group.addShape('circle', {    
+      attrs: {
+        x: endPoint.x,
+        y: endPoint.y,
+        r: 5,
+        fill: '#FF00FF',
+      } 
+    })
+  },
+
+});
+
+
+
 
 
 
@@ -42,7 +114,7 @@ export function drawGraph({nodes, edges}, containerEleId) {
       shape: 'rect',
     },
     defaultEdge: {
-      shape: 'line'
+      shape: 'my-edge',
     },
     nodeStyle: {
       default: {
@@ -63,7 +135,7 @@ export function drawGraph({nodes, edges}, containerEleId) {
     },
     edgeStyle: {
       default: {
-        lineWidth: 1,
+        lineWidth: 10,
         stroke: '#e2e2e2',
         fillOpacity: 0.2,
         opacity: 1,
