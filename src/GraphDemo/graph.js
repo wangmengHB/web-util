@@ -76,6 +76,61 @@ G6.registerEdge('customEdge', {
 });
 
 
+const MIN_GAP = 40;
+
+G6.registerEdge('arrow', {
+  draw(cfg, group) {
+    const { startPoint, endPoint } = cfg;
+    let hgap = endPoint.x - startPoint.x;
+    let vgap = endPoint.y - startPoint.y;
+    const ratio = MIN_GAP / Math.sqrt( hgap ** 2 + vgap ** 2);
+    const realEndPoint = {
+      x: endPoint.x - ratio * hgap,
+      y: endPoint.y - ratio * vgap
+    };
+    let deltaX = (MIN_GAP /3) * vgap / Math.sqrt( hgap ** 2 + vgap ** 2);
+    let deltaY = (MIN_GAP /3) * hgap / Math.sqrt( hgap ** 2 + vgap ** 2);
+
+    // deltaX = 10;
+    // deltaY = deltaX * hgap / vgap;
+  
+
+    const p1 = {
+      x: realEndPoint.x + deltaX,
+      y: realEndPoint.y - deltaY,
+    }
+    const p2 = {
+      x: realEndPoint.x - deltaX,
+      y: realEndPoint.y + deltaY,
+    }
+
+
+    group.addShape('polyline', {
+      attrs: {
+        points: [
+          [startPoint.x, startPoint.y],
+          [realEndPoint.x, realEndPoint.y],
+        ],
+        stroke: '#e2e2e2',
+        lineWidth: 1
+      }
+    });
+    
+    return group.addShape('polyline', {    
+      attrs: {
+        points: [
+          [realEndPoint.x, realEndPoint.y],
+          [p1.x, p1.y],
+          [endPoint.x, endPoint.y],
+          [p2.x, p2.y],
+          [realEndPoint.x, realEndPoint.y],
+        ],
+        stroke: '#FF00FF',
+      } 
+    })
+  }
+})
+
 
 
 
@@ -94,7 +149,7 @@ function doLayout(nodes, edges, graph) {
       // .distance(1)
       // .iterations(1)
     )
-    .force('collision', d3.forceCollide().radius(d => d.size[0] / 2));
+    .force('collision', d3.forceCollide().radius(d => d.size[0] / 2 + 100));
   simulation.nodes(nodes).on('tick', () => {
     graph.refreshPositions();
   });
@@ -114,7 +169,7 @@ export function drawGraph({nodes, edges}, containerEleId) {
       shape: 'rect',
     },
     defaultEdge: {
-      shape: 'my-edge',
+      shape: 'arrow',
     },
     nodeStyle: {
       default: {
